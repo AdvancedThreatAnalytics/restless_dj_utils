@@ -1,0 +1,15 @@
+version: "2"
+services:
+
+  postgres:
+    image: postgres:12-alpine
+    ports:
+      - 5432:5432
+    environment:
+        POSTGRES_USER: docker
+        POSTGRES_PASSWORD: docker
+
+  memcached:
+    image: memcached
+    ports:
+      - 11211:11211
