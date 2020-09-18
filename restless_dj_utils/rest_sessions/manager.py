@@ -1,6 +1,7 @@
 import logging
 import datetime
 import jwt
+from itertools import cycle
 
 from django.db import models
 from django.conf import settings
@@ -16,6 +17,9 @@ logger = logging.getLogger(__name__)
 def _load_settings():
     for setting in settings.AUTH_JWT_SECRET_KEYS.split(','):
         yield setting.split(':')
+
+
+_keys = cycle(_load_settings())
 
 
 def _get_backend():
@@ -76,7 +80,7 @@ class APISessionManager(models.Manager):
         self.get_queryset().filter(pk=api_session_id).update(is_active=False)
 
     def encode_token(self, token_data):
-        algorithm, key = next(_load_settings())
+        algorithm, key = next(_keys)
         return jwt.encode(token_data, key, algorithm=algorithm)
 
     def decode_token(self, token):

@@ -1,4 +1,5 @@
 import pytest
+from unittest import mock
 
 from django.contrib.auth import models
 
@@ -52,7 +53,6 @@ def test_auth_resource_mixin_invalid_token(rf):
     assert resource.request.user == models.AnonymousUser()
 
 
-
 @pytest.mark.django_db(transaction=True)
 def test_auth_resource_mixin_no_header(rf):
     """Test with a prefix"""
@@ -62,3 +62,15 @@ def test_auth_resource_mixin_no_header(rf):
 
     assert resource.is_authenticated() is False
     assert resource.request.user == models.AnonymousUser()
+
+
+@mock.patch('jwt.encode')
+@mock.patch('restless_dj_utils.rest_sessions.manager.settings')
+def test_keys_rotated(msettings, mjwt_encode):
+    msettings.AUTH_JWT_SECRET_KEYS = 'ALG1:k1,ALG2:k2,ALG3:k3,ALG4:k4'
+    token_data = 'dummy'
+    for i in (1, 2, 3, 4, 1, 2, 3, 4, 1):
+        APISession.objects.encode_token(token_data)
+        mjwt_encode.assert_called_with(
+            token_data, f'k{i}', algorithm=f'ALG{i}')
+        mjwt_encode.reset_mock()
