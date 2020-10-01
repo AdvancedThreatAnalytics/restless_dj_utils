@@ -39,6 +39,7 @@ class APISession(models.Model):
 
     class Meta:
         ordering = ["-created"]
+        get_latest_by = ["created"]
         verbose_name = "API session"
         verbose_name_plural = "API sessions"
         app_label = "rest_sessions"
@@ -131,3 +132,5 @@ class APISessionAccess(models.Model):
         verbose_name = "API session access"
         verbose_name_plural = "API session accesses"
         app_label = "rest_sessions"
+        ordering = ["-created"]
+        get_latest_by = ["created"]
