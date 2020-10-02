@@ -7,6 +7,11 @@ serve_media
 .envrc
 .envrc.local
 
+dist
+build
+
+*.sublime-*
+
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, VS Code
 
 *.iml
