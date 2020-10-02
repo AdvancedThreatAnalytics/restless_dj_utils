@@ -17,28 +17,28 @@ USER_AGENT = 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 6P Build/MMB29P) ' \
 def test_auth_resource_mixin(create_user, rf):
     """Test with valid token"""
 
-    user, token = APISession.authenticate_user(
+    api_session, token = APISession.authenticate_user(
         TEST_USERNAME, TEST_PASSWORD, REMOTE_ADDRESS, USER_AGENT)
 
     resource = AuthenticatedResourceMixin()
     resource.request = rf.get('/', HTTP_AUTHORIZATION=token)
 
     assert resource.is_authenticated() is True
-    assert resource.request.user == user
+    assert resource.request.user == api_session.user
 
 
 @pytest.mark.django_db(transaction=True)
 def test_auth_resource_mixin_with_prefix(create_user, rf):
     """Test with a prefix"""
 
-    user, token = APISession.authenticate_user(
+    api_session, token = APISession.authenticate_user(
         TEST_USERNAME, TEST_PASSWORD, REMOTE_ADDRESS, USER_AGENT)
 
     resource = AuthenticatedResourceMixin()
     resource.request = rf.get('/', HTTP_AUTHORIZATION=f'Bogus {token}')
 
     assert resource.is_authenticated() is True
-    assert resource.request.user == user
+    assert resource.request.user == api_session.user
 
 
 @pytest.mark.django_db(transaction=True)
