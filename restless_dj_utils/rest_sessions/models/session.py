@@ -77,9 +77,25 @@ class APISession(models.Model):
 
 
     @classmethod
+    def validate_token(cls, token):
+        """
+        Authenticates the given JWT token
+
+        :param token: JWT Token provided by the user
+        :return: Authenticated user
+        """
+        token_data = cls.objects.decode_token(token)
+        if token_data is None:
+            logger.info('Authentication failed')
+            raise AuthenticationError('Authentication failed')
+
+        return token_data
+
+
+    @classmethod
     def authenticate_token(cls, token):
         """
-        Authenticates and user with a given token
+        Authenticates a user with a given token
 
         :param token: JWT Token provided by the user
         :return: Authenticated user
